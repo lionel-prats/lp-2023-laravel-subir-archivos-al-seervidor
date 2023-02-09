@@ -27,14 +27,20 @@
                                     <td>{{ $file->user_id }}</td>
                                     <td>
                                         {{-- <a target="_blank" href="storage/{{ Auth::id() }}/{{ $file->name }}" class="btn btn-small btn-outline-secondary">Ver</a> --}}
-                                        <a target="_blank" href="{{ route('user.files.show', $file->id) }}" class="btn btn-small btn-outline-secondary">
+                                        <a target="_blank" href="{{ route('user.files.show', $file->code_name) }}" class="btn btn-small btn-outline-secondary">
                                             {{-- enlace a localhost:8000/files/id_archivo --}}
                                             Ver
                                         </a>
                                     </td>
                                    
                                     <td>
-                                        <a href="#" class="btn btn-small btn-outline-danger">Eliminar</a>
+                                        <form action="{{ route('user.files.destroy', $file->code_name) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-small btn-outline-danger">
+                                                Eliminar
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach

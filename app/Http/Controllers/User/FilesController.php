@@ -25,22 +25,22 @@ class FilesController extends Controller
         return view('user.files.index', compact('files'));
     }
     // muestra un archivo en particular 
-    public function show($id) // en $id guardamos el id del archivo, que nos llega por URL
+    public function show($codeName) // en $codeName guardamos el id del archivo, que nos llega por URL
     {
-        $file = File::whereId($id)->firstOrFail();
-        // SELECT * FROM files WHERE id = $id 
+        $file = File::whereCodeName($codeName)->firstOrFail();
+        // SELECT * FROM files WHERE id = $codeName 
 
         $user_id = Auth::id(); // obtengo el id del usuario autenticado
 
         if ($user_id == $file->user_id) {
             /* return redirect ('storage'/{{ Auth::id() }}/{{ $file->name }}); */
-            return redirect("storage/$user_id/$file->name");
+            return redirect("storage/$user_id/$file->code_name");
             return "vas a ver el archivo $file->id";
         } else {
             abort(403);
             //return "No tienes permiso para ver este archivo";
-            Alert::error('Error!!', 'No tienes permisos para ver este archivo'); // alert de SweetAlert
-            return back(); // return a la pagina previa
+            //Alert::error('Error!!', 'No tienes permisos para ver este archivo'); // alert de SweetAlert
+            //return back(); // return a la pagina previa
         }
 
 
@@ -61,12 +61,28 @@ class FilesController extends Controller
 
         if ($request->hasFile('files')) { // verificamos si el cliente ha enviado archivos
 
-            foreach ($files as $file) {
+            foreach ($files as $file) { // itero los archivos (pueden ser 1 o mas) que ha enviado el usuario desde el form
+
+
+
+
                 $fileName = Str::slug($file->getClientOriginalName()) . "." . $file->getClientOriginalExtension();
                 // almaceno en la variable el-nombre-del-archivo.laextension
+                // hasta el video 13 usaba esta forma para generar el nombre que iba a a tener el archivo dentro del storage 
+                // en el video 14 modifica esta variable, para que el nombre este encriptado, usando la funcion encrypt(), como se ve a continuacion
+
+                
+                $fileName =  encrypt( $file->getClientOriginalName() ) . "." . $file->getClientOriginalExtension();
+                
+                /* dd($fileName); */
+                
+
+
+                
                 if (Storage::putFileAs("/public/$user_id/", $file, $fileName)) {
                     File::create([
-                        'name' => $fileName, // obtengo el nombre del archivo
+                        'name' => $file->getClientOriginalName(), // en el campo name almaceno el nombre original del archivo
+                        'code_name' => $fileName, // en el campo code_name almaceno el nombre encriptado del archivo
                         'user_id' => $user_id // id del usuario autenticado
                     ]);
                 } // si se almaceno fisicamente el archivo, creamos el registro asociado, en la tabla files
@@ -83,5 +99,23 @@ class FilesController extends Controller
             return back(); // return a la pagina previa
 
         }
+    }
+    // eliminar un archivo
+    public function destroy($file_code_name)
+    {
+        // obtener el archivo que se quiere eliminar
+        $file = File::whereCodeName($file_code_name)->firstOrFail();
+
+        // borra el archivo del storage o almacenamiento
+        unlink(public_path("storage/" . Auth::id() . "/$file->code_name"));
+
+        //borra el registro asociado al archivo eliminado fisicamente, en la BD
+        $file->delete();
+
+        // avisar al usuario que se ha borrado exitosamente el archivo
+        Alert::info('Atención!', "Se ha eliminado el archivo $file->name"); // alert de SweetAlert
+        return back(); // return a la pagina previa
+
+        //dd(public_path("storage/" . Auth::id() . "/$file->name"));
     }
 }

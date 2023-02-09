@@ -9,6 +9,7 @@ class File extends Model
 {
     protected $fillable = [
         'name',
+        'code_name',
         'user_id'
     ];
     use HasFactory;

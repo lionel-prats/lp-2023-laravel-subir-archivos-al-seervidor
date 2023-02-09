@@ -184,3 +184,50 @@ puede acceder a un archivo ajeno conociendo el path al archivo ajeno -> http://l
 ------------------------------------------------------------------------------------
 
 VIDEO 13
+
+Como un usuario puede eliminar sus archivos
+
+vamos a usar la funcion de PHP unlink(), que es una funcion que nos permite borrar archivos
+tambien usaremos la funcion de PHP public_path(), que nos devuelve un string con el path a la carpeta /public en la raiz del proyecto vvv
+
+unlink(public_path("storage/" . Auth::id() . "/$file->name"));
+* public_path("storage/" . Auth::id() . "/$file->name") == "C:\xampp\htdocs\zzz-laravelsubirarchivos2\public\storage/1/worldsql.sql" 
+** la funcion unlink() eliminara el archivo /public/storage/1/worldsql.sql
+** como /public/storage es un acceso directo al contenido de /storage/app/public, el archivo se eliminara de ambos lugares
+
+a su vez, eliminaremos el registro asociado en la tabla files.
+previamente habiamos guardado en $file el archivo a eliminar 
+entonces accedemos al metodo delete() del modelo File, para eliminar el registro asociado, en la tabla files vvv
+
+$file->delete();
+
+------------------------------------------------------------------------------------
+
+VIDEO 14
+
+encriptar los nombres de los archivos 
+
+- el id de un registro en la BD es facil de conocer 
+- para blindar aun mas nuestra aplicacion podemos utilizar un Identificador Unico Universal (IU id)
+- pero veamos otra manera de encriptar la informacion 
+- deberemos modificar la BD y agrefar ese codigo de seguridad 
+
+1. en la migracion files
+    1.1. agregamos el campo code_name 
+    $table->string('code_name');
+    1.2. php artisan migrate:fresh -> dropeamos todas las tablas de la BD y las creamos de nuevo (esto borra todos los registros existentes)
+
+2. borramos todas las carpetas y archivos en el storage
+
+3. luego empieza a modificar el controlador, algunas vistas, etc. (repasar el video si hace falta) 
+
+4. en definitiva, cambia lo siguiente:
+
+4.1. los archivos, se guardan fisicamente en el storage con nombres del tipo vvv
+
+eyJpdiI6IjRTN25USFFuK3NvR1Vkam9rZ0JPSWc9PSIsInZhbHVlIjoiWmhsR2owMG5CdzQ2aW0wZFRRZTlBY2pxWG94WFp5d3ZrVFdpOE9KcFcxQT0iLCJtYWMiOiI0ODYxYmU0YzljNjFiMjcwN2QwM2M3MDE0ODQ2ODk5Nzg3MDA4NDVjMzlmOTE5ZDQ3MTQ1NGU5NWZhNjYzZjAwIiwidGFnIjoiIn0=.txt
+
+eyJpdiI6Im9jRVZ2UWRObHR1ZHc5UERHVVJSVkE9PSIsInZhbHVlIjoiRm1hR1JYd2tHSVdrVnBPOW1TTzJ3aHgrMFl5YlVySzVXWVFCQzlvRUs2az0iLCJtYWMiOiI0NzRjYTdhNTZkOTBjNDYyNGIyNDY2MmI0ZDcxOWU0MmU3Njk2ODY1ZDBiZDY5OWE4N2MyZTI1MGY0MmRiZjU2IiwidGFnIjoiIn0=.jpg
+
+4.2. en la tabla files de la BD, agrega un campo code_name, que almacenara esos nombres
+     a su vez, desestima guardar los nombres originales con el formato "slug" en el campo name, y los termina guardando con el nombre original
