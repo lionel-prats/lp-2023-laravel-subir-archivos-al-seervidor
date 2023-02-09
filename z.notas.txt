@@ -1,0 +1,167 @@
+tutorial -> https://www.udemy.com/course/como-subir-multiples-archivos-en-laravel/learn/lecture/21475996#overview
+
+VIDEO 3
+
+crear proyecto -> composer create-project laravel/laravel zzz-laravelsubirarchivos2
+
+modelo File y su archivo de migraciones -> php artisan make:model File -m 
+
+controlador FilesController con los 7 metodos del CRUD (index, create, store, show, edit, update y destroy) -> php artisan make:controller User/FilesController -r
+
+SISTEMA DE AUTENTICACION
+
+composer require laravel/ui 
+-> se instala la dependencia "laravel/ui": "^4.2" en el require del composer.json 
+
+php artisan ui vue --auth 
+->
+agrega este bloque en web.php vvv
+
+Auth::routes();
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+*** tambien crea el controlador HomeController.php y una carpeta Auth con 6 controladores:
+ConfirmPasswordController.php
+ForgotPasswordController.php
+LoginController.php
+RegisterController.php
+ResetPasswordController.php
+VerificationController.php
+
+*** tambien agraga devDependencies en package.json vvv
+"@popperjs/core": "^2.11.6",
+"@vitejs/plugin-vue": "^4.0.0",
+"bootstrap": "^5.2.3",
+"sass": "^1.56.1",
+"vue": "^3.2.37"
+
+*** en /views crea las carpetas /auth y /layout y el home.blade.php
+
+*** este comando agrega Bootstrap al peoyecto, y calculo que Vue tambien
+
+*** (es todo lo que detecte, quiza hay mas)
+
+------------------------
+
+npm install && npm run dev -> no funciona. Corri los comandos por separado (ver abajo)
+
+npm install -> instala /node_modules y package-lock.json
+
+npm run dev
+-> cuando quiero entrar a /home me tira errror y se soluciona corriendo npm run dev
+
+------------------------------------------------------------------------------------
+
+VIDEO 4
+
+configura las migraciones de files
+configura el modelo File
+configura el .env para conectar el proyecto a la BD zzz-laravelsubirarchivos2
+-> DB_DATABASE=zzz-laravelsubirarchivos2
+
+corremos las migraciones -> php artisan migrate
+esto creara las tablas en la BD:
+users 
+passwords_resets 
+failed_jobs 
+personal_acces_tokens
+files
+
+------------------------------------------------------------------------------------
+
+VIDEO 5 
+
+edita el home.blade.php para agregar el formulario para subir archivos
+
+------------------------------------------------------------------------------------
+
+VIDEO 6
+
+configura el store() del FileController.php
+guardara los registros de los archivos subidos a la tabla files de la BD
+
+id            name                  user_id      created_at            updated_at
+1    expensas_diciembre_2022.pdf        1    2023-02-09 01:33:56   2023-02-09 01:33:56
+2      expensas_enero_2023.pdf          1    2023-02-09 01:33:56   2023-02-09 01:33:56
+3     expensas_febrero_2023.pdf         1    2023-02-09 01:33:56   2023-02-09 01:33:56
+
+------------------------------------------------------------------------------------
+
+VIDEO 7
+
+configura el store() del FileController.php
+guarda fisicamente los archivos subidos en /storage/app/public/
+crea una carpeta con el id del usuario la primera vez que un usuario sube un archivo, con el/los archivos dentro
+* las proximas veces que el usuario suba archivos, lo hara dentro de la carpeta asociada
+
+para esto importamos el Facade Storage y usamos el metodo putFileAs vvv
+
+use Illuminate\Support\Facades\Storage;
+
+en el metodo vvv
+
+Storage::putFileAs("/public/$user_id/", $file, $file->getClientOriginalName());
+
+si hacemos un echo de lo anterior, nos retornara el path al archivo almacenado vvv
+public/3//foto4x4.pdf
+
+parametros del metodo putFileAs vvv
+1. especificamos donde se alojara el archivo dentro de /storage 
+2. le pasamos el archivo que llego desde el input del form 
+3. le pasamos el nombre que le daremos al archivo
+
+-----
+
+corremos el comando 
+php artisan storage:link
+"para tener un acceso directo a la carpeta publica del almacenamiento"
+*** esto significa que me crea en /public un acceso directo de la siguiente manera vvv 
+/public/storage/2/nombre_archivo.txt
+/public/storage/3/nombre_archivo.png
+
+------------------------------------------------------------------------------------
+
+VIDEO 8
+
+agregamos sweet alert 
+repo -> https://github.com/realrashid/sweet-alert
+comando de instalacion -> composer require realrashid/sweet-alert
+
+se nos instalara la siguiente dependencia en el require del composer.json
+"realrashid/sweet-alert": "^5.1"
+
+https://realrashid.github.io/sweet-alert/install
+seguimos esta guia para configurar correctamente todo
+
+------------------------------------------------------------------------------------
+
+VIDEO 9
+
+validar que se hayan cargado archivos en el input, del lado del servidor
+
+usamos el metodo hasFile('files') del $request
+este metodo retorna true o false dependiendo de si se cargaron o no archivos
+
+$request->hasFile('files')
+
+------------------------------------------------------------------------------------
+
+VIDEO 10
+
+Programación de la ruta, el controlador y la vista para que un usuario pueda ver sus archivos cargados
+
+------------------------------------------------------------------------------------
+
+VIDEO 11
+
+Guardar los nombres de los archivos como un SLUG, es decir, en una URL amigable vvv
+
+"foto tamano normal.jpg" en el navegador se lee http://localhost:8000/storage/2/foto%20tamano%20normal.jpg
+
+para esto importamos la depebdencia Str y usamos su metodo slug vvv
+
+use Illuminate\Support\Str;
+
+Str::slug($file->getClientOriginalName());
+
+Str::slug("hola cachorros locos") == "hola-cachorros-locos"
