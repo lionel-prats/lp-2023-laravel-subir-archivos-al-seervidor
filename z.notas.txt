@@ -165,3 +165,22 @@ use Illuminate\Support\Str;
 Str::slug($file->getClientOriginalName());
 
 Str::slug("hola cachorros locos") == "hola-cachorros-locos"
+
+------------------------------------------------------------------------------------
+
+VIDEO 12
+
+explica como validar que un usuario solo pueda acceder a sus propios archivos 
+en principio no funciona bien, porque en la validacion que propone, si un usuario logueado intenta acceder a un archivo, podria hacerlo obteniendo la URL.
+Ejemplo vvv
+
+usuario autenticado con id = 1
+puede acceder a un archivo propio -> http://localhost:8000/storage/1/consultassqltxt.txt
+puede acceder a un archivo ajeno conociendo el path al archivo ajeno -> http://localhost:8000/storage/2/correcaminosjpg.jpg
+
+*** correr el comando php artisan storage:link para crear un acceso directo a los archivos subidos en /public, aparentemente modifica el package-lock.json
+*** me parecce porque estoy en la oficina, clone el proyecto, cree el acceso directo, ahora me estoy yendo, tire un git status, y compruebo que se modifico ese archivo, y no instale ninguna dependencia nueva, y a parte de ese comando solo corri las migraciones para generar la estructura de la BD en local en la PC del trabajo
+
+------------------------------------------------------------------------------------
+
+VIDEO 13

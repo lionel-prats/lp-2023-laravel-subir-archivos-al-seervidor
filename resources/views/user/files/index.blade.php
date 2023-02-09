@@ -26,11 +26,15 @@
                                     <td>{{ $file->name }}</td>
                                     <td>{{ $file->user_id }}</td>
                                     <td>
-                                        <a target="_blank" href="storage/{{ Auth::id() }}/{{ $file->name }}" class="btn btn-small btn-outline-secondary">Ver</a>
+                                        {{-- <a target="_blank" href="storage/{{ Auth::id() }}/{{ $file->name }}" class="btn btn-small btn-outline-secondary">Ver</a> --}}
+                                        <a target="_blank" href="{{ route('user.files.show', $file->id) }}" class="btn btn-small btn-outline-secondary">
+                                            {{-- enlace a localhost:8000/files/id_archivo --}}
+                                            Ver
+                                        </a>
                                     </td>
                                    
                                     <td>
-                                        <a href="#" class="btn btn-small btn-outline-danger">Ver</a>
+                                        <a href="#" class="btn btn-small btn-outline-danger">Eliminar</a>
                                     </td>
                                 </tr>
                                 @endforeach

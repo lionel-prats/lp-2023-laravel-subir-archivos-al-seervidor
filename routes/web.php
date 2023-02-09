@@ -27,3 +27,4 @@ Route::post('/upload', [App\Http\Controllers\User\FilesController::class, 'store
 
 // opcion "Mis archivos"
 Route::get('/files', [App\Http\Controllers\User\FilesController::class, 'index'])->name('user.files.index');
+Route::get('/file/{file}', [App\Http\Controllers\User\FilesController::class, 'show'])->name('user.files.show');

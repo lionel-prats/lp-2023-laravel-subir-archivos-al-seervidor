@@ -59,7 +59,6 @@
                                         Subir archivo
                                     </a>
                                     <a class="dropdown-item" href="{{ route('user.files.index') }}">
-                                        {{-- {{ __('Mis archivos') }} --}}
                                         Mis archivos
                                     </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
