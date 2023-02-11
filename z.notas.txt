@@ -231,3 +231,7 @@ eyJpdiI6Im9jRVZ2UWRObHR1ZHc5UERHVVJSVkE9PSIsInZhbHVlIjoiRm1hR1JYd2tHSVdrVnBPOW1T
 
 4.2. en la tabla files de la BD, agrega un campo code_name, que almacenara esos nombres
      a su vez, desestima guardar los nombres originales con el formato "slug" en el campo name, y los termina guardando con el nombre original
+
+------------------------------------------------------------------------------------
+
+*** luego de clonar un proyecto laravel desde github, hay que correr npm install y composer install para que se instalen /node_modules y /vendor respectivamente
